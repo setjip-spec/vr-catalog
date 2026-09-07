@@ -14,6 +14,8 @@
   let cloudApplying = false;
   let saveTimer = null;
   let lastSavedSignature = '';
+  let migrationPending = false;
+  let legacyPersonalDataDetectedAtBoot = false;
 
   const clone = value => JSON.parse(JSON.stringify(value));
   const signature = value => JSON.stringify(value);
@@ -105,6 +107,10 @@
     return value && typeof value === 'object' && Object.keys(value).length > 0;
   }
 
+  function detectLegacyPersonalData() {
+    return hasOwnData(typeof edits === 'object' && edits ? edits : {}) || hasOwnData(typeof views === 'object' && views ? views : {});
+  }
+
   function applyCloudState(cloudState, firstMigration = false) {
     const localEdits = clone(typeof edits === 'object' && edits ? edits : {});
     const localViews = clone(typeof views === 'object' && views ? views : {});
@@ -170,7 +176,7 @@
     clearTimeout(saveTimer);
     saveTimer = null;
     const payload = exportCurrentState();
-    payload.meta.localMigrationDone = true;
+    payload.meta.localMigrationDone = migrationPending ? legacyPersonalDataDetectedAtBoot : true;
     const sig = signature(payload);
     if (sig === lastSavedSignature) return;
 
@@ -198,6 +204,7 @@
       }
       cloudRevision = Number(data.revision) || nextRevision;
       lastSavedSignature = sig;
+      if (payload.meta.localMigrationDone) migrationPending = false;
     } catch (error) {
       console.error('VR Catalog cloud save error:', error);
     } finally {
@@ -233,16 +240,18 @@
       let row = await loadCloudRow();
       if (!row) {
         const localPayload = exportCurrentState();
-        localPayload.meta.localMigrationDone = true;
+        localPayload.meta.localMigrationDone = legacyPersonalDataDetectedAtBoot;
         await createCloudRow(localPayload);
+        migrationPending = !localPayload.meta.localMigrationDone;
         lastSavedSignature = signature(localPayload);
       } else {
         cloudRevision = Number(row.revision) || 0;
         const remote = row.state || {};
         const firstMigration = !remote?.meta?.localMigrationDone;
+        migrationPending = firstMigration;
         applyCloudState(remote, firstMigration);
         cloudReady = true;
-        if (firstMigration) await persistNow(true);
+        if (firstMigration && legacyPersonalDataDetectedAtBoot) await persistNow(true);
         else lastSavedSignature = signature(exportCurrentState());
       }
       cloudReady = true;
@@ -288,6 +297,7 @@
 
   async function boot() {
     injectCloudUi();
+    legacyPersonalDataDetectedAtBoot = detectLegacyPersonalData();
     if (!window.supabase?.createClient) {
       showGate('Не загрузилась библиотека Supabase. Обновите страницу и проверьте интернет.');
       return;
