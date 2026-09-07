@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VR Каталог — Quest 3 / Steam / Meta</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="headerline">
+      <div>
+        <h1>VR Каталог</h1>
+        <div class="sub">Quest 3 / Meta / Steam / программы. Фильтры и выбранные колонки сохраняются после обновления страницы.</div>
+      </div>
+      <div class="notice">Рейтинг /10 пересчитан из «Рекомендации» и «Приоритета» исходной таблицы.</div>
+    </div>
+
+    <div class="filters">
+      <div class="control"><label>Поиск</label><input id="q" placeholder="Название, описание, комментарий…"></div>
+      <div class="control"><label>Тип</label><select id="type"></select></div>
+      <div class="control"><label>Статус</label><select id="status"></select></div>
+      <div class="control"><label>Платформа / доступность</label><select id="availability"></select></div>
+      <div class="control"><label>Где лучше</label><select id="best"></select></div>
+      <div class="control"><label>Категория</label><select id="category"></select></div>
+      <div class="control"><label>Рейтинг от</label><select id="ratingMin"></select></div>
+      <div class="control"><label>Рейтинг до</label><select id="ratingMax"></select></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" id="colsBtn">Колонки</button>
+      <button class="btn" id="presetCompact">Название + рейтинг + описание</button>
+      <button class="btn" id="presetMain">Основные</button>
+      <button class="btn" id="resetFilters">Сбросить фильтры</button>
+      <button class="btn" id="copyLink">Скопировать ссылку с фильтрами</button>
+
+      <div class="savedViews">
+        <input id="viewName" placeholder="Имя вида" style="width:140px">
+        <button class="btn" id="saveView">Сохранить вид</button>
+        <select id="savedView"><option value="">Сохранённые виды…</option></select>
+        <button class="btn danger" id="deleteView" title="Удалить выбранный вид">Удалить вид</button>
+      </div>
+
+      <div class="chips">
+        <span class="chip">Показано: <strong id="shownCount">0</strong></span>
+        <span class="chip">Всего: <strong id="totalCount">0</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tablewrap">
+    <table id="grid"><thead></thead><tbody></tbody></table>
+    <div class="empty" id="empty" style="display:none">По этим фильтрам ничего не найдено.</div>
+  </div>
+</div>
+
+<div class="popover" id="colsPopover">
+  <div class="pophead">
+    <strong>Какие колонки показывать</strong>
+    <button class="btn" id="closeCols">Закрыть</button>
+  </div>
+  <div class="actions" style="margin:0 0 10px">
+    <button class="btn" id="allCols">Все</button>
+    <button class="btn" id="noCols">Минимум</button>
+  </div>
+  <div class="colgrid" id="colGrid"></div>
+</div>
+
+<script src="data-1.js"></script>
+<script src="data-2.js"></script>
+<script src="data-3.js"></script>
+<script src="columns.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
