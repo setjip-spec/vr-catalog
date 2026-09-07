@@ -1,0 +1,33 @@
+name: Validate APP-002
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check columns.js
+          node --check free-filter.js
+          node --check cloud-sync.js
+          node --check data-1.js
+          node --check data-2.js
+          node --check data-3.js
+          node --check data-4.js
+      - name: Check required APP-002 files
+        run: |
+          test -f index.html
+          test -f .nojekyll
+          test -f docs/APP-002-TZ.md
+          test -f docs/LINKS.md
+          test -f docs/RECOVERY.md
