@@ -1,0 +1,15 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Temporary exports / backups
+*.zip
+*.bak
+*.tmp
