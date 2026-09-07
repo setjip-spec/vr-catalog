@@ -31,3 +31,13 @@ jobs:
           test -f docs/APP-002-TZ.md
           test -f docs/LINKS.md
           test -f docs/RECOVERY.md
+      - name: Build recovery source snapshot
+        if: github.event_name == 'push'
+        run: zip -r APP-002-VR-Catalog-source.zip . -x '.git/*' 'APP-002-VR-Catalog-source.zip'
+      - name: Upload recovery source snapshot
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: APP-002-VR-Catalog-source
+          path: APP-002-VR-Catalog-source.zip
+          retention-days: 30
