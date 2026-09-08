@@ -20,10 +20,12 @@ jobs:
           node --check columns.js
           node --check free-filter.js
           node --check cloud-sync.js
+          node --check catalog-v02.js
           node --check data-1.js
           node --check data-2.js
           node --check data-3.js
           node --check data-4.js
+          node --check data-5.js
       - name: Check required APP-002 files
         run: |
           test -f index.html
@@ -31,6 +33,10 @@ jobs:
           test -f docs/APP-002-TZ.md
           test -f docs/LINKS.md
           test -f docs/RECOVERY.md
+          grep -q 'data-5.js' index.html
+          grep -q 'catalog-v02.js' index.html
+          grep -q '18+' data-5.js
+          grep -q 'QLoader / язык' columns.js
       - name: Build recovery source snapshot
         if: github.event_name == 'push'
         run: zip -r APP-002-VR-Catalog-source.zip . -x '.git/*' 'APP-002-VR-Catalog-source.zip'
